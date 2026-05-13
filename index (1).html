@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MrZMathAI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+:root{
+  --blue:#1A56FF;--blue2:#4D7FFF;--blue3:#EEF3FF;--blue4:#D6E4FF;
+  --yellow:#FFD000;--yellow2:#FFE566;--yellow3:#FFFBEA;--yellow4:#FFF3B0;--ydark:#996600;
+  --green:#00C48C;--red:#FF3B5C;--bg:#F5F8FF;--white:#fff;--border:#DDE6FF;
+  --text:#0F1733;--text2:#5A6A9A;--text3:#A0B0D8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* SCREENS */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+#setup.active{display:flex;align-items:center;justify-content:center;}
+#home.active{display:block;}
+#learn.active{display:flex;flex-direction:column;}
+
+/* SETUP */
+.setup-box{background:#fff;border:2px solid var(--border);border-radius:24px;padding:2.5rem;max-width:420px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(26,86,255,0.1);}
+.setup-icon{width:60px;height:60px;border-radius:16px;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:var(--blue);margin:0 auto 1rem;box-shadow:0 4px 16px rgba(255,208,0,0.4);}
+.setup-title{font-size:22px;font-weight:900;margin-bottom:.4rem;}
+.setup-sub{font-size:13px;color:var(--text2);font-weight:600;margin-bottom:1.8rem;line-height:1.6;}
+.setup-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:13px 14px;color:var(--text);font-size:13px;font-family:'Nunito',sans-serif;font-weight:600;outline:none;margin-bottom:12px;}
+.setup-input:focus{border-color:var(--blue);}
+.setup-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 16px rgba(26,86,255,0.3);}
+.setup-btn:hover{opacity:.92;}
+.setup-err{color:var(--red);font-size:12px;font-weight:700;margin-top:10px;display:none;}
+.setup-note{margin-top:1rem;font-size:11px;color:var(--text3);font-weight:600;}
+
+/* NAV */
+.top-band{background:linear-gradient(120deg,#1A3FCC,#1A56FF,#4D7FFF);position:relative;overflow:hidden;padding-bottom:2rem;}
+.top-band::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:40px;background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%);}
+.ydot{position:absolute;border-radius:50%;background:rgba(255,208,0,0.15);}
+.yd1{width:200px;height:200px;top:-60px;right:-40px;}
+.yd2{width:90px;height:90px;bottom:10px;left:8%;}
+.home-inner{max-width:900px;margin:0 auto;padding:0 1.2rem 3rem;width:100%;}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 0 1.8rem;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:42px;height:42px;border-radius:12px;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:var(--blue);box-shadow:0 4px 16px rgba(255,208,0,0.4);}
+.logo-name{font-size:18px;font-weight:900;color:#fff;}
+.logo-name .ai{color:var(--yellow);}
+.nav-btns{display:flex;gap:8px;}
+.nbtn{padding:8px 18px;border-radius:22px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;border:none;transition:all .2s;}
+.ng{background:rgba(255,255,255,0.15);color:#fff;}
+.ny{background:var(--yellow);color:var(--blue);}
+
+/* HERO */
+.hero-card{background:#fff;border-radius:24px;padding:2rem;margin-bottom:1.2rem;box-shadow:0 8px 40px rgba(26,86,255,0.1);display:flex;align-items:center;gap:1.5rem;border:2px solid var(--blue4);margin-top:-1rem;}
+.hero-left{flex:1;}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--blue3);border:2px solid var(--blue4);color:var(--blue);font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.9rem;}
+.tdot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:blink 2s infinite;}
+.hero h1{font-size:clamp(1.7rem,4vw,2.5rem);font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:.7rem;}
+.hero h1 .bl{color:var(--blue);}
+.hero-sub{font-size:14px;color:var(--text2);line-height:1.75;font-weight:600;max-width:400px;}
+.hero-right{background:linear-gradient(135deg,var(--yellow),var(--yellow2));border-radius:20px;padding:1.5rem 1.2rem;text-align:center;min-width:130px;flex-shrink:0;border:2px solid rgba(204,153,0,0.2);}
+.hnum{font-size:3rem;font-weight:900;color:var(--blue);display:block;}
+.hnl{font-size:11px;font-weight:800;color:var(--ydark);}
+.ysub{margin-top:8px;background:var(--blue);border-radius:8px;padding:4px 8px;font-size:11px;font-weight:800;color:#fff;}
+
+/* SUGGEST */
+.suggest{background:linear-gradient(120deg,var(--yellow),var(--yellow2));border-radius:20px;padding:1.1rem 1.4rem;display:flex;align-items:center;gap:14px;margin-bottom:1.4rem;cursor:pointer;transition:all .25s;box-shadow:0 8px 28px rgba(255,208,0,0.35);border:2px solid rgba(204,153,0,0.2);}
+.suggest:hover{transform:translateY(-3px);}
+.si{width:48px;height:48px;border-radius:14px;background:rgba(26,86,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.st{flex:1;}
+.sl{font-size:10px;font-weight:900;color:var(--ydark);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+.sm{font-size:14px;font-weight:800;color:var(--text);}
+.sgo{background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:12px;font-size:13px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;}
+
+/* TOPICS */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;}
+.sec-lbl{font-size:13px;font-weight:900;color:var(--text);}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;}
+.tc{background:#fff;border:2px solid var(--border);border-radius:18px;padding:1rem;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;}
+.tc:hover{transform:translateY(-5px);border-color:var(--blue2);box-shadow:0 12px 32px rgba(26,86,255,0.12);}
+.tc-top{position:absolute;top:0;left:0;right:0;height:4px;border-radius:18px 18px 0 0;}
+.c-bl{background:linear-gradient(90deg,var(--blue),var(--blue2));}
+.c-yl{background:linear-gradient(90deg,#CC9900,var(--yellow));}
+.c-pu{background:linear-gradient(90deg,#7C3AED,#A78BFA);}
+.tc-emoji{font-size:26px;margin:6px 0 8px;}
+.tc-name{font-size:13px;font-weight:900;color:var(--text);margin-bottom:3px;}
+.tc-sub{font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.4;font-weight:600;}
+.tc-foot{display:flex;align-items:center;justify-content:space-between;}
+.tc-badge{font-size:10px;font-weight:800;padding:3px 9px;border-radius:10px;background:var(--blue3);color:var(--blue2);}
+.tc-arr{color:var(--text3);font-size:14px;font-weight:900;transition:all .2s;}
+.tc:hover .tc-arr{transform:translateX(4px);color:var(--blue);}
+
+/* LEARN NAV */
+.lnav{background:#fff;border-bottom:2px solid var(--border);padding:.9rem 1.4rem;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(26,86,255,0.07);}
+.back-btn{background:var(--bg);border:2px solid var(--border);color:var(--text2);padding:7px 14px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;transition:all .2s;}
+.back-btn:hover{border-color:var(--blue);color:var(--blue);}
+.ltitle{font-size:15px;font-weight:900;flex:1;color:var(--text);}
+.lvl-track{display:flex;gap:5px;}
+.lpip{height:6px;border-radius:4px;background:var(--border);transition:all .3s;}
+.lpip.done{background:var(--green);width:28px;}
+.lpip.active{background:var(--yellow);width:36px;box-shadow:0 0 10px rgba(255,208,0,0.5);}
+.lpip.off{width:20px;}
+.lvl-label{font-size:11px;font-weight:800;color:var(--text2);margin-left:4px;}
+
+/* LEARN BODY */
+.learn-body{display:grid;grid-template-columns:1fr 320px;flex:1;overflow:hidden;min-height:calc(100vh - 60px);}
+
+/* TEACH SIDE */
+.teach-side{padding:1.4rem;overflow-y:auto;background:var(--bg);display:flex;flex-direction:column;gap:1.2rem;}
+.step-block{display:flex;gap:14px;}
+.step-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.step-circle{width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;box-shadow:0 4px 12px rgba(26,86,255,0.3);}
+.step-circle.yc{background:var(--yellow);color:var(--blue);box-shadow:0 4px 12px rgba(255,208,0,0.4);}
+.step-connector{width:2px;flex:1;background:var(--border);margin:4px 0;min-height:16px;}
+.step-content{flex:1;padding-bottom:1.2rem;}
+.step-tag{font-size:10px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.step-tag.yt{color:var(--ydark);}
+.step-card{background:#fff;border:2px solid var(--border);border-radius:16px;padding:1.1rem 1.2rem;box-shadow:0 2px 12px rgba(26,86,255,0.05);font-size:14px;line-height:1.8;font-weight:600;color:var(--text);}
+.step-card.bc{background:var(--blue3);border-color:rgba(26,86,255,0.15);}
+.step-card.yc2{background:var(--yellow3);border-color:rgba(204,153,0,0.25);}
+.hl{color:var(--blue);font-weight:900;}
+
+/* MATH BOX */
+.math-box{background:#fff;border:2px solid var(--blue4);border-radius:12px;padding:12px;margin:10px 0;text-align:center;}
+.math-box.yb{background:var(--yellow3);border-color:rgba(204,153,0,0.25);}
+.mf{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--blue);display:block;margin-bottom:4px;}
+.mf.yd{color:var(--ydark);}
+.ml{font-size:11px;color:var(--text2);font-weight:700;}
+.math-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 0;}
+.mb{background:#fff;border:2px solid var(--blue4);border-radius:10px;padding:7px 12px;text-align:center;}
+.mb.yb{background:var(--yellow3);border-color:rgba(204,153,0,0.3);}
+.mb-t{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--blue);}
+.mb.yb .mb-t{color:var(--ydark);}
+.mb-l{font-size:10px;font-weight:700;color:var(--text2);margin-top:2px;}
+.ma{font-size:16px;color:var(--text3);font-weight:700;}
+.mr{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-radius:10px;padding:7px 14px;text-align:center;}
+.mr-t{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;}
+.mr-l{font-size:10px;opacity:.8;margin-top:2px;font-weight:700;}
+
+/* AI AREA */
+.ai-area{background:#fff;border:2px solid var(--border);border-radius:16px;padding:1.2rem;font-size:14px;line-height:1.8;font-weight:600;color:var(--text);min-height:80px;}
+.ai-label{font-size:10px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+
+/* TIP */
+.tip-card{background:var(--yellow3);border:2px solid rgba(204,153,0,0.25);border-left:4px solid var(--yellow);border-radius:0 14px 14px 0;padding:1rem 1.2rem;}
+.tip-head{font-size:11px;font-weight:900;color:var(--ydark);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
+.tip-text{font-size:13.5px;color:var(--text);line-height:1.7;font-weight:600;}
+
+/* PRACTICE SIDE */
+.pside{background:#fff;border-left:2px solid var(--border);padding:1.2rem;display:flex;flex-direction:column;gap:1rem;overflow-y:auto;}
+.qlabel{font-size:11px;font-weight:900;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;}
+.qcard{background:var(--bg);border:2px solid var(--border);border-radius:16px;padding:1.1rem;}
+.qtext{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:4px;}
+.qdisplay{background:#fff;border:2px solid var(--yellow4);border-radius:12px;padding:14px;text-align:center;margin:10px 0 14px;min-height:60px;display:flex;align-items:center;justify-content:center;}
+.qf{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--blue);}
+.ainput{width:100%;background:#fff;border:2px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-size:15px;font-weight:700;font-family:'Space Mono',monospace;outline:none;margin-bottom:10px;transition:border-color .2s;}
+.ainput:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,255,0.1);}
+.ainput::placeholder{color:var(--text3);font-family:'Nunito',sans-serif;font-weight:600;font-size:13px;}
+.brow{display:flex;gap:8px;}
+.hbtn{flex:1;padding:11px 8px;background:var(--yellow3);border:2px solid rgba(204,153,0,0.25);color:var(--ydark);border-radius:12px;cursor:pointer;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;transition:all .2s;}
+.hbtn:disabled{opacity:.4;cursor:not-allowed;}
+.cbtn{flex:2;padding:11px 8px;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;border-radius:12px;cursor:pointer;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;box-shadow:0 4px 16px rgba(26,86,255,0.3);}
+.cbtn:disabled{opacity:.4;cursor:not-allowed;}
+.fb{border-radius:14px;padding:.9rem 1rem;font-size:13px;line-height:1.65;display:none;font-weight:600;margin-top:4px;}
+.fb.correct{display:block;background:#F0FDF7;border:2px solid rgba(0,196,140,0.3);color:#047857;}
+.fb.wrong{display:block;background:#FFF1F3;border:2px solid rgba(255,59,92,0.2);color:var(--red);}
+.fb.hint{display:block;background:var(--yellow3);border:2px solid rgba(204,153,0,0.25);color:var(--ydark);}
+.fb.sol{display:block;background:var(--bg);border:2px solid var(--border);color:var(--text);}
+.fb.cele{display:block;background:linear-gradient(135deg,var(--yellow3),var(--blue3));border:2px solid var(--blue4);color:var(--text);}
+.lvlup{display:none;flex-direction:column;gap:8px;}
+.lvlup.show{display:flex;}
+.lbtn{padding:10px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;border:none;text-align:center;transition:all .2s;}
+.lb-yes{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;}
+.lb-more{background:var(--yellow3);border:2px solid rgba(204,153,0,0.25);color:var(--ydark);}
+
+/* CHAT */
+.chatwrap{border-top:2px solid var(--border);padding-top:1rem;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;}
+.chathead{font-size:11px;font-weight:900;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:7px;}
+.ldot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s infinite;}
+.chatlog{flex:1;min-height:80px;max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;}
+.cm{font-size:12.5px;padding:8px 11px;border-radius:12px;line-height:1.55;font-weight:600;}
+.cm.mrz{background:var(--blue3);border:1.5px solid var(--blue4);color:var(--text);}
+.cm.stu{background:var(--yellow3);color:var(--text);align-self:flex-end;max-width:88%;border:1.5px solid rgba(204,153,0,0.2);}
+.crow{display:flex;gap:6px;}
+.ci{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:8px 11px;color:var(--text);font-size:13px;font-family:'Nunito',sans-serif;font-weight:600;outline:none;transition:border-color .2s;}
+.ci:focus{border-color:var(--blue);}
+.cs{width:36px;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:16px;font-weight:900;}
+
+.dots{display:flex;gap:4px;padding:4px 0;align-items:center;}
+.dots span{width:7px;height:7px;border-radius:50%;background:var(--blue);animation:bounce 1.1s infinite;}
+.dots span:nth-child(2){animation-delay:.18s;}
+.dots span:nth-child(3){animation-delay:.36s;}
+
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+@media(max-width:620px){
+  .learn-body{grid-template-columns:1fr;}
+  .pside{border-left:none;border-top:2px solid var(--border);}
+  .hero-right{display:none;}
+  .hero-card{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup" class="screen active">
+  <div class="setup-box">
+    <div class="setup-icon">M</div>
+    <div class="setup-title">MrZMath<span style="color:var(--yellow)">AI</span></div>
+    <div class="setup-sub">Paste your Anthropic API key below to activate Mr.Z and start learning maths</div>
+    <input id="keyInput" class="setup-input" type="password" placeholder="Paste your full API key here (sk-ant-...)"/>
+    <button class="setup-btn" onclick="activateKey()">Activate MrZMathAI &rarr;</button>
+    <div id="keyErr" class="setup-err">Please paste your complete API key starting with sk-ant-</div>
+    <div class="setup-note">Your key is saved only on this device &mdash; never shared with anyone.</div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="home" class="screen">
+  <div class="top-band">
+    <div class="ydot yd1"></div>
+    <div class="ydot yd2"></div>
+    <div class="home-inner">
+      <nav class="nav">
+        <div class="logo">
+          <div class="logo-icon">M</div>
+          <div class="logo-name">MrZMath<span class="ai">AI</span></div>
+        </div>
+        <div class="nav-btns">
+          <button class="nbtn ng">Log in</button>
+          <button class="nbtn ny">Sign up free ✨</button>
+        </div>
+      </nav>
+      <div class="hero-card">
+        <div class="hero-left">
+          <div class="hero-tag"><span class="tdot"></span> Free for every student</div>
+          <h1>Maths finally<br>makes <span class="bl">sense.</span> 🎯</h1>
+          <p class="hero-sub">MrZMathAI teaches you step by step — from the very basics all the way to exam level. The AI finds exactly where you are and builds you up from there.</p>
+        </div>
+        <div class="hero-right">
+          <span class="hnum">5</span>
+          <div class="hnl">Levels per topic</div>
+          <div class="ysub">Basic &rarr; Exam ready</div>
+        </div>
+      </div>
+      <div class="suggest" onclick="startTopic('expanding-brackets','✖️','Expanding Brackets')">
+        <div class="si">🧠</div>
+        <div class="st">
+          <div class="sl">⚡ Mr.Z recommends — start here</div>
+          <div class="sm">Expanding Brackets — nail this and all algebra opens up</div>
+        </div>
+        <button class="sgo">Let's go &rarr;</button>
+      </div>
+      <div class="sec-head"><div class="sec-lbl">📚 All topics</div></div>
+      <div class="tgrid">
+        <div class="tc" onclick="startTopic('expanding-brackets','✖️','Expanding Brackets')"><div class="tc-top c-bl"></div><div class="tc-emoji">✖️</div><div class="tc-name">Expanding Brackets</div><div class="tc-sub">Single, double & triple brackets</div><div class="tc-foot"><span class="tc-badge">Algebra</span><span class="tc-arr">→</span></div></div>
+        <div class="tc" onclick="startTopic('factorising','🔍','Factorising')"><div class="tc-top c-yl"></div><div class="tc-emoji">🔍</div><div class="tc-name">Factorising</div><div class="tc-sub">HCF, quadratics, difference of squares</div><div class="tc-foot"><span class="tc-badge">Algebra</span><span class="tc-arr">→</span></div></div>
+        <div class="tc" onclick="startTopic('solving-equations','⚖️','Solving Equations')"><div class="tc-top c-bl"></div><div class="tc-emoji">⚖️</div><div class="tc-name">Solving Equations</div><div class="tc-sub">Balance method, unknowns both sides</div><div class="tc-foot"><span class="tc-badge">Algebra</span><span class="tc-arr">→</span></div></div>
+        <div class="tc" onclick="startTopic('fractions','🔢','Fractions')"><div class="tc-top c-yl"></div><div class="tc-emoji">🔢</div><div class="tc-name">Fractions</div><div class="tc-sub">All operations, algebraic fractions</div><div class="tc-foot"><span class="tc-badge">Number</span><span class="tc-arr">→</span></div></div>
+        <div class="tc" onclick="startTopic('percentages','📊','Percentages')"><div class="tc-top c-bl"></div><div class="tc-emoji">📊</div><div class="tc-name">Percentages</div><div class="tc-sub">Reverse %, compound interest, growth</div><div class="tc-foot"><span class="tc-badge">Number</span><span class="tc-arr">→</span></div></div>
+        <div class="tc" onclick="startTopic('pythagoras','📐','Pythagoras')"><div class="tc-top c-yl"></div><div class="tc-emoji">📐</div><div class="tc-name">Pythagoras</div><div class="tc-sub">2D, 3D and exam contexts</div><div class="tc-foot"><span class="tc-badge">Geometry</span><span class="tc-arr">→</span></div></div>
+        <div class="tc" onclick="startTopic('ratio','⚡','Ratio & Proportion')"><div class="tc-top c-pu"></div><div class="tc-emoji">⚡</div><div class="tc-name">Ratio & Proportion</div><div class="tc-sub">Simplifying, sharing, direct & inverse</div><div class="tc-foot"><span class="tc-badge">Number</span><span class="tc-arr">→</span></div></div>
+        <div class="tc" onclick="startTopic('trigonometry','📏','Trigonometry')"><div class="tc-top c-bl"></div><div class="tc-emoji">📏</div><div class="tc-name">Trigonometry</div><div class="tc-sub">Sin, cos, tan — right-angle triangles</div><div class="tc-foot"><span class="tc-badge">Geometry</span><span class="tc-arr">→</span></div></div>
+        <div class="tc" onclick="startTopic('quadratics','🔺','Quadratics')"><div class="tc-top c-pu"></div><div class="tc-emoji">🔺</div><div class="tc-name">Quadratics</div><div class="tc-sub">Factorising, formula, completing square</div><div class="tc-foot"><span class="tc-badge">Algebra</span><span class="tc-arr">→</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEARN -->
+<div id="learn" class="screen">
+  <div class="lnav">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <div class="ltitle" id="learnTitle">Expanding Brackets</div>
+    <div class="lvl-track">
+      <div class="lpip active" id="p1"></div>
+      <div class="lpip off" id="p2"></div>
+      <div class="lpip off" id="p3"></div>
+      <div class="lpip off" id="p4"></div>
+      <div class="lpip off" id="p5"></div>
+    </div>
+    <div class="lvl-label" id="lvlLabel">Level 1</div>
+  </div>
+
+  <div class="learn-body">
+    <div class="teach-side">
+
+      <div class="step-block">
+        <div class="step-line"><div class="step-circle">1</div><div class="step-connector"></div></div>
+        <div class="step-content">
+          <div class="step-tag">What you already know</div>
+          <div class="step-card">
+            You already know the <span class="hl">distributive property</span>:
+            <div class="math-box yb"><span class="mf yd">3 × (2 + 4) = 3×2 + 3×4</span><div class="ml">= 6 + 12 = 18 ✅</div></div>
+            Algebra brackets work <span class="hl">exactly the same way.</span> 🎯
+          </div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-line"><div class="step-circle yc">2</div><div class="step-connector"></div></div>
+        <div class="step-content">
+          <div class="step-tag yt">Mr.Z teaches</div>
+          <div class="ai-area" id="aiArea">
+            <div class="ai-label">🧠 Mr.Z is loading...</div>
+            <div class="dots"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-line"><div class="step-circle yc">!</div></div>
+        <div class="step-content">
+          <div class="step-tag yt">Edexcel exam tip</div>
+          <div class="tip-card">
+            <div class="tip-head">🎯 Free marks — don't lose them!</div>
+            <div class="tip-text" id="tipText">Always show your working line — Edexcel gives method marks for steps, not just the final answer!</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="pside">
+      <div class="qlabel">🎯 Now you try</div>
+      <div class="qcard">
+        <div class="qtext">Answer this question:</div>
+        <div class="qdisplay" id="qDisplay"><div class="dots"><span></span><span></span><span></span></div></div>
+        <input class="ainput" id="ans" type="text" placeholder="Type your answer..."/>
+        <div class="brow">
+          <button class="hbtn" id="hbtn" onclick="doHint()">💡 Hint</button>
+          <button class="cbtn" id="cbtn" onclick="doCheck()">Check it →</button>
+        </div>
+      </div>
+      <div class="fb" id="fb"></div>
+      <div class="lvlup" id="lvlup">
+        <button class="lbtn lb-yes" onclick="levelUp()">🚀 Yes — level up!</button>
+        <button class="lbtn lb-more" onclick="sameLevel()">🔄 Give me another at this level</button>
+      </div>
+      <div class="chatwrap">
+        <div class="chathead"><div class="ldot"></div>Ask Mr.Z anything</div>
+        <div class="chatlog" id="clog">
+          <div class="cm mrz">👋 Hey! Read the steps on the left, then try the question. Ask me anything here — no question is silly! 😊</div>
+        </div>
+        <div class="crow">
+          <input class="ci" id="ci" placeholder="Ask Mr.Z a question..." onkeydown="if(event.key==='Enter')doChat()"/>
+          <button class="cs" onclick="doChat()">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var API_KEY = '';
+var MODEL = 'claude-sonnet-4-20250514';
+var currentTopic = '';
+var currentLevel = 1;
+var currentQuestion = '';
+var currentAnswer = '';
+var attempts = 0;
+var chatHistory = [];
+
+var TOPICS = {
+  'expanding-brackets':{name:'Expanding Brackets',prior:'distributive property — 3×(2+4)=3×2+3×4',emphasis:'The negative sign outside MUST multiply every term inside — biggest source of lost marks',levels:{1:'Single bracket, positive terms. e.g. 3(x+5)',2:'Single bracket with negatives inside. e.g. 4(x-3)',3:'Negative outside bracket. e.g. -3(x+2)',4:'Double brackets. e.g. (x+3)(x+2)',5:'Squared and triple brackets. e.g. (2x+1)²'}},
+  'factorising':{name:'Factorising',prior:'factors of numbers — 2×3=6, so 2 and 3 are factors of 6',emphasis:'Always check by expanding back out — factorising is the reverse of expanding',levels:{1:'HCF of simple expressions. e.g. 6x+3',2:'Larger coefficients. e.g. 12x+8',3:'With x² terms. e.g. 3x²+9x',4:'Quadratics (a=1). e.g. x²+5x+6',5:'Quadratics (a>1) and difference of squares'}},
+  'solving-equations':{name:'Solving Equations',prior:'BODMAS — order of operations. Balance scales — both sides always equal',emphasis:'Use BODMAS in reverse to undo operations. Whatever you do to one side, do to the other',levels:{1:'One-step equations. e.g. x+5=12',2:'Two-step equations. e.g. 2x+3=11',3:'Unknown both sides. e.g. 3x+2=x+10',4:'With brackets. e.g. 3(x+2)=18',5:'Fractional equations. e.g. (x+3)/2=5'}},
+  'fractions':{name:'Fractions',prior:'division — fractions are just division. Half = divide by 2',emphasis:'Always find common denominator for adding/subtracting. Never add denominators!',levels:{1:'Equivalent fractions and simplifying',2:'Adding and subtracting with different denominators',3:'Multiplying and dividing fractions',4:'Fractions of amounts, reverse fractions',5:'Algebraic fractions'}},
+  'percentages':{name:'Percentages',prior:'fractions — percent means per hundred. 50% = 50/100 = 0.5',emphasis:'Use multipliers — 15% increase means ×1.15. Reverse % means divide, not subtract',levels:{1:'Finding simple percentages of amounts',2:'Percentage increase and decrease',3:'Reverse percentages',4:'Compound interest and repeated change',5:'Growth and decay problems'}},
+  'pythagoras':{name:"Pythagoras' Theorem",prior:'squares and square roots — 3²=9, √9=3. Right-angle triangles.',emphasis:"Only works on RIGHT-ANGLE triangles. c is always the HYPOTENUSE — the longest side",levels:{1:'Finding the hypotenuse with simple numbers',2:'Finding the shorter side',3:'Decimal answers and real contexts',4:'3D Pythagoras',5:'Proof and complex problems'}},
+  'ratio':{name:'Ratio & Proportion',prior:'fractions and division — ratios compare quantities',emphasis:'Always simplify ratios. For sharing — find ONE part first, then multiply',levels:{1:'Writing and simplifying ratios',2:'Sharing in a given ratio',3:'Ratio problems with totals',4:'Direct and inverse proportion',5:'Algebraic proportionality'}},
+  'trigonometry':{name:'Trigonometry',prior:'Pythagoras and right-angle triangles. Ratios.',emphasis:'Label sides FIRST — hypotenuse, opposite, adjacent. Then choose sin/cos/tan',levels:{1:'What sin, cos, tan mean. Labelling sides',2:'Finding a missing side',3:'Finding a missing angle',4:'Multi-step problems and bearings',5:'Exact values and harder problems'}},
+  'quadratics':{name:'Quadratics',prior:'expanding brackets and factorising',emphasis:'Always try factorising first. If it does not factorise, use the formula',levels:{1:'Solving by factorising (simple)',2:'Solving by factorising (harder)',3:'The quadratic formula',4:'Completing the square',5:'Quadratic inequalities'}}
+};
+
+function getSysPrompt() {
+  var t = TOPICS[currentTopic];
+  return 'You are Mr.Z — a friendly experienced maths teacher. Warm, casual, encouraging. Never give answers away — nudge students to think. Max 1 emoji per message.\n\nTopic: '+t.name+'\nLevel: '+currentLevel+' of 5\nLevel content: '+t.levels[currentLevel]+'\nConnect to: '+t.prior+'\nKey emphasis: '+t.emphasis+'\nExam board: Edexcel\n\nAlways show maths step by step on separate lines. Keep replies short and focused.';
+}
+
+function activateKey() {
+  var k = document.getElementById('keyInput').value.trim();
+  if (k.length < 20) { document.getElementById('keyErr').style.display='block'; return; }
+  API_KEY = k;
+  try { localStorage.setItem('mrz_key', k); } catch(e) {}
+  document.getElementById('setup').classList.remove('active');
+  document.getElementById('home').classList.add('active');
+}
+
+window.onload = function() {
+  try {
+    var saved = localStorage.getItem('mrz_key');
+    if (saved && saved.length > 20) {
+      API_KEY = saved;
+      document.getElementById('setup').classList.remove('active');
+      document.getElementById('home').classList.add('active');
+    }
+  } catch(e) {}
+};
+
+function startTopic(id, emoji, name) {
+  currentTopic = id; currentLevel = 1; attempts = 0; chatHistory = [];
+  document.getElementById('learnTitle').textContent = emoji + ' ' + name;
+  document.getElementById('home').classList.remove('active');
+  document.getElementById('learn').classList.add('active');
+  resetPractice();
+  updatePips();
+  loadTeaching();
+}
+
+function goHome() {
+  document.getElementById('learn').classList.remove('active');
+  document.getElementById('home').classList.add('active');
+}
+
+function updatePips() {
+  for (var i=1;i<=5;i++) {
+    var p = document.getElementById('p'+i);
+    if (i<currentLevel) p.className='lpip done';
+    else if (i===currentLevel) p.className='lpip active';
+    else p.className='lpip off';
+  }
+  document.getElementById('lvlLabel').textContent = 'Level '+currentLevel;
+}
+
+function resetPractice() {
+  document.getElementById('ans').value='';
+  document.getElementById('fb').className='fb';
+  document.getElementById('fb').innerHTML='';
+  document.getElementById('fb').style.display='none';
+  document.getElementById('cbtn').disabled=false;
+  document.getElementById('hbtn').disabled=false;
+  document.getElementById('lvlup').classList.remove('show');
+  attempts=0; currentQuestion=''; currentAnswer='';
+}
+
+async function loadTeaching() {
+  var area = document.getElementById('aiArea');
+  area.innerHTML = '<div class="ai-label">🧠 Mr.Z is preparing Level '+currentLevel+'...</div><div class="dots"><span></span><span></span><span></span></div>';
+  document.getElementById('qDisplay').innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+
+  var t = TOPICS[currentTopic];
+  var prompt = 'Teach Level '+currentLevel+' of '+t.name+'.\n\nStructure your response exactly like this:\nCONCEPT: [2-3 sentences connecting to prior knowledge]\nRULE: [one clear sentence — the rule to follow]\nEXAMPLE: [show one worked example with each step on its own line]\nWARNING: [most common mistake at this level]\n\nThen on a new line write:\nQUESTION: [one question appropriate for Level '+currentLevel+': '+t.levels[currentLevel]+']\nANSWER: [the exact correct answer]';
+
+  try {
+    var resp = await callAPI(prompt);
+    var qPart = resp.split('QUESTION:');
+    var teaching = qPart[0].trim();
+    if (qPart[1]) {
+      var aPart = qPart[1].split('ANSWER:');
+      currentQuestion = aPart[0].trim();
+      currentAnswer = aPart[1] ? aPart[1].trim() : '';
+    }
+    area.innerHTML = '<div class="ai-label">🧠 Mr.Z — Level '+currentLevel+'</div>' + formatText(teaching);
+    document.getElementById('qDisplay').innerHTML = currentQuestion ? '<div class="qf">'+esc(currentQuestion)+'</div>' : '<div class="qf" style="font-size:14px;color:var(--text2)">Could not load question</div>';
+  } catch(e) {
+    area.innerHTML = '<div class="ai-label">⚠️ Error</div><p>Could not connect. Check your API key is correct and try again.</p>';
+    document.getElementById('qDisplay').innerHTML = '<div class="qf" style="font-size:14px;color:var(--text2)">Error loading</div>';
+  }
+}
+
+function formatText(t) {
+  return t.split('\n').filter(function(l){return l.trim();}).map(function(l){
+    return '<p style="margin-bottom:8px;">'+esc(l.trim())+'</p>';
+  }).join('');
+}
+
+function esc(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function doCheck() {
+  var v = document.getElementById('ans').value.trim();
+  if (!v) return;
+  attempts++;
+  document.getElementById('cbtn').disabled = true;
+  var fb = document.getElementById('fb');
+  fb.className='fb sol'; fb.style.display='block';
+  fb.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+
+  var prompt = 'Student is doing: '+currentTopic+' Level '+currentLevel+'.\nQuestion: '+currentQuestion+'\nExpected answer: '+currentAnswer+'\nStudent answer: '+v+'\nAttempt number: '+attempts+'\n\nIf CORRECT (consider equivalent forms): Write CORRECT on line 1. Then one sentence celebration. Then ask: "Ready to level up to Level '+(currentLevel+1)+', or want another at this level?"\nIf WRONG and attempt 1: Write WRONG on line 1. Ask ONE question that helps them find their mistake without giving the answer.\nIf WRONG and attempt 2+: Write WRONG on line 1. Show full step-by-step worked solution.';
+
+  try {
+    var resp = await callAPI(prompt);
+    var correct = resp.trim().indexOf('CORRECT') === 0;
+    var msg = resp.replace(/^(CORRECT|WRONG)\n?/,'').trim();
+    if (correct) {
+      fb.className='fb cele'; fb.innerHTML='🌟 '+msg;
+      document.getElementById('hbtn').disabled=true;
+      if (currentLevel < 5) document.getElementById('lvlup').classList.add('show');
+      else fb.innerHTML += '<br><br>🏆 <strong>All 5 levels complete!</strong> You are fully exam ready on this topic!';
+    } else if (attempts >= 2) {
+      fb.className='fb sol'; fb.innerHTML='📖 '+msg;
+    } else {
+      fb.className='fb wrong'; fb.innerHTML='❌ '+msg;
+      document.getElementById('cbtn').disabled=false;
+    }
+  } catch(e) {
+    fb.className='fb wrong'; fb.innerHTML='⚡ Connection error. Try again.';
+    document.getElementById('cbtn').disabled=false;
+  }
+}
+
+async function doHint() {
+  var fb = document.getElementById('fb');
+  fb.className='fb hint'; fb.style.display='block';
+  fb.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  try {
+    var resp = await callAPI('Give a short hint for this question WITHOUT giving the answer. Topic: '+currentTopic+' Level '+currentLevel+'. Question: '+currentQuestion+'. Max 2 sentences.');
+    fb.innerHTML='💡 <strong>Mr.Z\'s hint:</strong> '+resp;
+  } catch(e) {
+    fb.innerHTML='💡 Think about what the number outside does to each term inside the bracket separately.';
+  }
+}
+
+async function levelUp() {
+  if (currentLevel>=5) return;
+  currentLevel++;
+  document.getElementById('lvlup').classList.remove('show');
+  updatePips(); resetPractice();
+  addMsg('mrz','🚀 Level '+currentLevel+' — let\'s go! Getting more interesting now.');
+  await loadTeaching();
+}
+
+async function sameLevel() {
+  document.getElementById('lvlup').classList.remove('show');
+  resetPractice();
+  addMsg('mrz','👍 Smart move — practice makes perfect. Here\'s another one!');
+  await loadTeaching();
+}
+
+async function doChat() {
+  var ci = document.getElementById('ci');
+  var msg = ci.value.trim(); if (!msg) return; ci.value='';
+  addMsg('stu', msg);
+  var ld = document.createElement('div'); ld.className='cm mrz';
+  ld.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  document.getElementById('clog').appendChild(ld);
+  document.getElementById('clog').scrollTop=9999;
+  chatHistory.push({role:'user',content:msg});
+  try {
+    var r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:400,system:getSysPrompt()+'\nCurrent question: '+currentQuestion,messages:chatHistory})});
+    var d = await r.json();
+    var reply = d.content&&d.content[0]?d.content[0].text:'Try again!';
+    chatHistory.push({role:'assistant',content:reply});
+    ld.innerHTML='🧠 '+reply;
+  } catch(e) { ld.innerHTML='⚡ Connection error. Try again.'; }
+  document.getElementById('clog').scrollTop=9999;
+}
+
+function addMsg(type,text) {
+  var log=document.getElementById('clog');
+  var m=document.createElement('div'); m.className='cm '+type; m.textContent=text;
+  log.appendChild(m); log.scrollTop=9999;
+}
+
+async function callAPI(prompt) {
+  var r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:800,system:getSysPrompt(),messages:[{role:'user',content:prompt}]})});
+  if (!r.ok) throw new Error('API '+r.status);
+  var d = await r.json();
+  return d.content&&d.content[0]?d.content[0].text:'';
+}
+</script>
+</body>
+</html>
