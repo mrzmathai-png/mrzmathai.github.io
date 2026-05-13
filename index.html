@@ -458,8 +458,8 @@ async function loadTeaching() {
     area.innerHTML = '<div class="ai-label">🧠 Mr.Z — Level '+currentLevel+'</div>' + formatText(teaching);
     document.getElementById('qDisplay').innerHTML = currentQuestion ? '<div class="qf">'+esc(currentQuestion)+'</div>' : '<div class="qf" style="font-size:14px;color:var(--text2)">Could not load question</div>';
   } catch(e) {
-    area.innerHTML = '<div class="ai-label">⚠️ Error</div><p>Could not connect. Check your API key is correct and try again.</p>';
-    document.getElementById('qDisplay').innerHTML = '<div class="qf" style="font-size:14px;color:var(--text2)">Error loading</div>';
+    area.innerHTML = '<div class="ai-label">⚠️ Error: '+e.message+'</div><p>Could not connect to Mr.Z. Check your API key and try again.</p>';
+    document.getElementById('qDisplay').innerHTML = '<div class="qf" style="font-size:14px;color:var(--text2)">Error: '+e.message+'</div>';
   }
 }
 
@@ -543,7 +543,21 @@ async function doChat() {
   document.getElementById('clog').scrollTop=9999;
   chatHistory.push({role:'user',content:msg});
   try {
-    var r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:400,system:getSysPrompt()+'\nCurrent question: '+currentQuestion,messages:chatHistory})});
+    var r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 400,
+        system: getSysPrompt() + '\nCurrent question: ' + currentQuestion,
+        messages: chatHistory
+      })
+    });
     var d = await r.json();
     var reply = d.content&&d.content[0]?d.content[0].text:'Try again!';
     chatHistory.push({role:'assistant',content:reply});
@@ -559,8 +573,25 @@ function addMsg(type,text) {
 }
 
 async function callAPI(prompt) {
-  var r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:800,system:getSysPrompt(),messages:[{role:'user',content:prompt}]})});
-  if (!r.ok) throw new Error('API '+r.status);
+  var r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 800,
+      system: getSysPrompt(),
+      messages: [{role:'user', content:prompt}]
+    })
+  });
+  if (!r.ok) {
+    var err = await r.json().catch(function(){return {};});
+    throw new Error('API '+ r.status +': '+ (err.error&&err.error.message||'unknown'));
+  }
   var d = await r.json();
   return d.content&&d.content[0]?d.content[0].text:'';
 }
