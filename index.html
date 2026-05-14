@@ -122,21 +122,86 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .hl{color:var(--blue);font-weight:900;}
 
 /* MATH BOX */
-.math-box{background:#fff;border:2px solid var(--blue4);border-radius:12px;padding:12px;margin:10px 0;text-align:center;}
+.math-box{background:#fff;border:2px solid var(--blue4);border-radius:14px;padding:16px;margin:12px 0;text-align:center;}
 .math-box.yb{background:var(--yellow3);border-color:rgba(204,153,0,0.25);}
-.mf{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--blue);display:block;margin-bottom:4px;}
+.mf{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--blue);display:block;margin-bottom:4px;}
 .mf.yd{color:var(--ydark);}
-.ml{font-size:11px;color:var(--text2);font-weight:700;}
+.ml{font-size:11px;color:var(--text2);font-weight:700;margin-top:4px;}
 .math-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 0;}
-.mb{background:#fff;border:2px solid var(--blue4);border-radius:10px;padding:7px 12px;text-align:center;}
+.mb{background:#fff;border:2px solid var(--blue4);border-radius:10px;padding:8px 14px;text-align:center;}
 .mb.yb{background:var(--yellow3);border-color:rgba(204,153,0,0.3);}
-.mb-t{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--blue);}
+.mb-t{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--blue);}
 .mb.yb .mb-t{color:var(--ydark);}
-.mb-l{font-size:10px;font-weight:700;color:var(--text2);margin-top:2px;}
-.ma{font-size:16px;color:var(--text3);font-weight:700;}
-.mr{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-radius:10px;padding:7px 14px;text-align:center;}
-.mr-t{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;}
+.mb-l{font-size:10px;font-weight:700;color:var(--text2);margin-top:3px;}
+.ma{font-size:18px;color:var(--text3);font-weight:700;}
+.mr{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-radius:10px;padding:8px 16px;text-align:center;}
+.mr-t{font-family:'Space Mono',monospace;font-size:17px;font-weight:700;}
 .mr-l{font-size:10px;opacity:.8;margin-top:2px;font-weight:700;}
+
+/* MATH RENDERING */
+.math-render{
+  background:#fff;
+  border:2px solid var(--blue4);
+  border-radius:14px;
+  padding:18px;
+  margin:10px 0;
+  text-align:center;
+  font-size:1.3em;
+  min-height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:8px;
+}
+.math-render.yb{background:var(--yellow3);border-color:rgba(204,153,0,0.25);}
+.math-render .mlabel{font-size:11px;color:var(--text2);font-weight:700;font-family:'Nunito',sans-serif;}
+
+/* QUESTION DISPLAY - bigger and clearer */
+.qdisplay{
+  background:#fff;
+  border:2px solid var(--yellow4);
+  border-radius:14px;
+  padding:20px;
+  text-align:center;
+  margin:10px 0 14px;
+  min-height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.4em;
+}
+.qf{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--blue);}
+
+/* AI TEACH AREA - more space */
+.ai-area{
+  background:#fff;
+  border:2px solid var(--border);
+  border-radius:16px;
+  padding:1.4rem;
+  font-size:14px;
+  line-height:1.9;
+  font-weight:600;
+  color:var(--text);
+  min-height:120px;
+}
+.ai-area p{margin-bottom:10px;}
+.ai-area .math-line{
+  font-family:'Space Mono',monospace;
+  font-size:16px;
+  color:var(--blue);
+  background:var(--blue3);
+  border:1.5px solid var(--blue4);
+  border-radius:8px;
+  padding:8px 14px;
+  display:block;
+  margin:8px 0;
+  text-align:center;
+}
+.ai-label{font-size:10px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+
+/* FEEDBACK BOX - bigger */
+.fb{border-radius:14px;padding:1.1rem 1.2rem;font-size:14px;line-height:1.75;display:none;font-weight:600;margin-top:6px;}
 
 /* AI AREA */
 .ai-area{background:#fff;border:2px solid var(--border);border-radius:16px;padding:1.2rem;font-size:14px;line-height:1.8;font-weight:600;color:var(--text);min-height:80px;}
@@ -203,6 +268,19 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   .hero-card{flex-direction:column;}
 }
 </style>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    displayMath: [['$$', '$$']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script','noscript','style','textarea','pre']
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
 <body>
 
@@ -379,7 +457,7 @@ var TOPICS = {
 
 function getSysPrompt() {
   var t = TOPICS[currentTopic];
-  return 'You are Mr.Z — a friendly experienced maths teacher. Warm, casual, encouraging. Never give answers away — nudge students to think. Max 1 emoji per message.\n\nTopic: '+t.name+'\nLevel: '+currentLevel+' of 5\nLevel content: '+t.levels[currentLevel]+'\nConnect to: '+t.prior+'\nKey emphasis: '+t.emphasis+'\nExam board: Edexcel\n\nAlways show maths step by step on separate lines. Keep replies short and focused.';
+  return 'You are Mr.Z — a friendly experienced maths teacher. Warm, casual, encouraging. Never give answers away — nudge students to think. Max 1 emoji per message.\n\nTopic: '+t.name+'\nLevel: '+currentLevel+' of 5\nLevel content: '+t.levels[currentLevel]+'\nConnect to: '+t.prior+'\nKey emphasis: '+t.emphasis+'\nExam board: Edexcel\n\nIMPORTANT FORMATTING RULES:\n- Show ALL maths on its own separate line\n- Use clear notation: use × for multiply, ÷ for divide, ² for squared\n- Each step of working must be on its own line\n- Write equations clearly e.g. 2(x + 3) = 2×x + 2×3 = 2x + 6\n- Keep explanations short — max 3-4 sentences per section\n- Never use markdown symbols like ** or ##';
 }
 
 function activateKey() {
@@ -456,7 +534,15 @@ async function loadTeaching() {
       currentAnswer = aPart[1] ? aPart[1].trim() : '';
     }
     area.innerHTML = '<div class="ai-label">🧠 Mr.Z — Level '+currentLevel+'</div>' + formatText(teaching);
-    document.getElementById('qDisplay').innerHTML = currentQuestion ? '<div class="qf">'+esc(currentQuestion)+'</div>' : '<div class="qf" style="font-size:14px;color:var(--text2)">Could not load question</div>';
+    if (window.MathJax) { MathJax.typesetPromise([area]); }
+    if (currentQuestion) {
+      var qHtml = '<div style="font-family:Space Mono,monospace;font-size:22px;font-weight:700;color:var(--blue);line-height:1.5;">'+esc(currentQuestion)+'</div>';
+      document.getElementById('qDisplay').innerHTML = qHtml;
+      // Trigger MathJax if available
+      if (window.MathJax) { MathJax.typesetPromise([document.getElementById('qDisplay')]); }
+    } else {
+      document.getElementById('qDisplay').innerHTML = '<div class="qf" style="font-size:14px;color:var(--text2)">Could not load question</div>';
+    }
   } catch(e) {
     area.innerHTML = '<div class="ai-label">⚠️ Error: '+e.message+'</div><p>Could not connect to Mr.Z. Check your API key and try again.</p>';
     document.getElementById('qDisplay').innerHTML = '<div class="qf" style="font-size:14px;color:var(--text2)">Error: '+e.message+'</div>';
@@ -464,9 +550,28 @@ async function loadTeaching() {
 }
 
 function formatText(t) {
-  return t.split('\n').filter(function(l){return l.trim();}).map(function(l){
-    return '<p style="margin-bottom:8px;">'+esc(l.trim())+'</p>';
-  }).join('');
+  var lines = t.split('\n').filter(function(l){return l.trim();});
+  var html = '';
+  lines.forEach(function(line) {
+    line = line.trim();
+    // Detect math lines - lines with =, ×, ÷, equations, or starting with numbers/letters followed by operators
+    var isMath = /[=×÷±√²³]/.test(line) || 
+                 /^[\d\w].*[+\-×÷=]/.test(line) ||
+                 /^Step \d/.test(line) ||
+                 /\(.*\).*=/.test(line);
+    
+    if (isMath && !line.startsWith('Step') && line.length < 60) {
+      html += '<div class="math-line">'+esc(line)+'</div>';
+    } else if (line.startsWith('CONCEPT:') || line.startsWith('RULE:') || line.startsWith('EXAMPLE:') || line.startsWith('WARNING:')) {
+      var parts = line.split(':');
+      var label = parts[0];
+      var text = parts.slice(1).join(':').trim();
+      html += '<p style="margin-bottom:10px;"><strong style="color:var(--blue);">'+esc(label)+':</strong> '+esc(text)+'</p>';
+    } else {
+      html += '<p style="margin-bottom:10px;">'+esc(line)+'</p>';
+    }
+  });
+  return html;
 }
 
 function esc(t) {
