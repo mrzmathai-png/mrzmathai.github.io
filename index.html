@@ -1,1 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MrZMathAI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap');
+:root{
+  --blue:#1A56FF;--blue2:#4D7FFF;--blue3:#EEF3FF;--blue4:#D6E4FF;
+  --yellow:#FFD000;--yellow3:#FFFBEA;--yellow4:#FFF3B0;--ydark:#996600;
+  --green:#00C48C;--red:#FF3B5C;--bg:#F5F8FF;--border:#DDE6FF;
+  --text:#0F1733;--text2:#5A6A9A;--text3:#A0B0D8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.hide{display:none;}
 
+/* SETUP */
+#setup{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);}
+.box{background:#fff;border:2px solid var(--border);border-radius:24px;padding:2.5rem;max-width:400px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(26,86,255,0.1);}
+.icon{width:60px;height:60px;border-radius:16px;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:var(--blue);margin:0 auto 1rem;}
+.box h1{font-size:22px;font-weight:900;margin-bottom:.4rem;}
+.box p{font-size:13px;color:var(--text2);font-weight:600;margin-bottom:1.5rem;line-height:1.6;}
+.box input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:13px 14px;color:var(--text);font-size:13px;font-family:'Nunito',sans-serif;font-weight:600;outline:none;margin-bottom:12px;}
+.box input:focus{border-color:var(--blue);}
+.box button{width:100%;padding:14px;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;}
+.err{color:var(--red);font-size:12px;font-weight:700;margin-top:10px;display:none;}
+.note{margin-top:1rem;font-size:11px;color:var(--text3);font-weight:600;}
+
+/* HOME */
+#home{display:none;min-height:100vh;}
+.band{background:linear-gradient(120deg,#1A3FCC,#1A56FF,#4D7FFF);padding-bottom:2rem;position:relative;overflow:hidden;}
+.band::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:40px;background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%);}
+.inner{max-width:700px;margin:0 auto;padding:0 1.2rem 3rem;width:100%;}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 0 1.8rem;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:40px;height:40px;border-radius:11px;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:19px;color:var(--blue);}
+.logo-name{font-size:17px;font-weight:900;color:#fff;}
+.logo-name .ai{color:var(--yellow);}
+.hero{background:#fff;border-radius:20px;padding:1.5rem;margin-bottom:1rem;box-shadow:0 8px 32px rgba(26,86,255,0.1);border:2px solid var(--blue4);margin-top:-1rem;}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--blue3);border:2px solid var(--blue4);color:var(--blue);font-size:11px;font-weight:800;padding:4px 11px;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.8rem;}
+.hero h1{font-size:1.9rem;font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:.6rem;}
+.hero h1 span{color:var(--blue);}
+.hero p{font-size:13px;color:var(--text2);line-height:1.7;font-weight:600;}
+.suggest{background:linear-gradient(120deg,var(--yellow),#FFE566);border-radius:18px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.2rem;cursor:pointer;box-shadow:0 6px 24px rgba(255,208,0,0.3);border:2px solid rgba(204,153,0,0.2);}
+.suggest:hover{transform:translateY(-2px);}
+.sug-icon{width:42px;height:42px;border-radius:12px;background:rgba(26,86,255,0.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.sug-text{flex:1;}
+.sug-label{font-size:10px;font-weight:900;color:var(--ydark);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+.sug-msg{font-size:13px;font-weight:800;color:var(--text);}
+.sug-btn{background:var(--blue);color:#fff;border:none;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;}
+.sec-lbl{font-size:12px;font-weight:900;color:var(--text);margin-bottom:.8rem;text-transform:uppercase;letter-spacing:.05em;}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;}
+.tc{background:#fff;border:2px solid var(--border);border-radius:16px;padding:.9rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.tc:hover{transform:translateY(-4px);border-color:var(--blue2);box-shadow:0 10px 28px rgba(26,86,255,0.12);}
+.tc-top{position:absolute;top:0;left:0;right:0;height:4px;border-radius:16px 16px 0 0;}
+.bl{background:linear-gradient(90deg,var(--blue),var(--blue2));}
+.yl{background:linear-gradient(90deg,#CC9900,var(--yellow));}
+.pu{background:linear-gradient(90deg,#7C3AED,#A78BFA);}
+.tc-emoji{font-size:22px;margin:4px 0 6px;}
+.tc-name{font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px;}
+.tc-sub{font-size:10px;color:var(--text2);margin-bottom:8px;line-height:1.4;font-weight:600;}
+.tc-foot{display:flex;align-items:center;justify-content:space-between;}
+.tc-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:8px;background:var(--blue3);color:var(--blue2);}
+.tc-arr{color:var(--text3);font-size:13px;font-weight:900;}
+.tc:hover .tc-arr{color:var(--blue);}
+
+/* LEARN */
+#learn{display:none;flex-direction:column;min-height:100vh;}
+#learn.show{display:flex;}
+.lnav{background:#fff;border-bottom:2px solid var(--border);padding:.8rem 1.2rem;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;box-shadow:0 2px 10px rgba(26,86,255,0.07);}
+.back{background:var(--bg);border:2px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;}
+.back:hover{border-color:var(--blue);color:var(--blue);}
+.ltitle{font-size:14px;font-weight:900;flex:1;color:var(--text);}
+.pips{display:flex;gap:4px;}
+.pip{height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.pip.done{background:var(--green);width:24px;}
+.pip.active{background:var(--yellow);width:32px;}
+.pip.off{width:16px;}
+.lvl-lbl{font-size:11px;font-weight:800;color:var(--text2);white-space:nowrap;}
+
+.lbody{display:grid;grid-template-columns:1fr 270px;flex:1;max-width:860px;margin:0 auto;width:100%;min-height:calc(100vh - 56px);}
+
+/* TEACH */
+.tside{padding:1.2rem;overflow-y:auto;background:var(--bg);display:flex;flex-direction:column;gap:1rem;}
+.sblock{display:flex;gap:12px;}
+.sline{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.scircle{width:30px;height:30px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;}
+.scircle.yc{background:var(--yellow);color:var(--blue);}
+.sconnect{width:2px;flex:1;background:var(--border);margin:3px 0;min-height:14px;}
+.scontent{flex:1;padding-bottom:1rem;}
+.stag{font-size:10px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.stag.yt{color:var(--ydark);}
+.scard{background:#fff;border:2px solid var(--border);border-radius:14px;padding:1rem;font-size:13px;line-height:1.8;font-weight:600;color:var(--text);}
+.scard.bc{background:var(--blue3);border-color:rgba(26,86,255,0.15);}
+.scard.yc2{background:var(--yellow3);border-color:rgba(204,153,0,0.25);}
+.mline{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--ydark);background:var(--yellow3);border:1.5px solid rgba(204,153,0,0.25);border-radius:8px;padding:7px 12px;display:block;margin:8px 0;text-align:center;}
+.mline.bl2{color:var(--blue);background:var(--blue3);border-color:var(--blue4);}
+.hl{color:var(--blue);font-weight:900;}
+.ai-lbl{font-size:10px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.ai-text p{margin-bottom:8px;}
+.ai-text .sh{font-size:11px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 4px;}
+.ai-text .warn{color:var(--red);font-weight:700;}
+.tip{background:var(--yellow3);border:2px solid rgba(204,153,0,0.2);border-left:3px solid var(--yellow);border-radius:0 12px 12px 0;padding:.9rem 1rem;}
+.tip-h{font-size:10px;font-weight:900;color:var(--ydark);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+.tip-t{font-size:13px;color:var(--text);line-height:1.65;font-weight:600;}
+
+/* PRACTICE */
+.pside{background:#fff;border-left:2px solid var(--border);padding:1rem;display:flex;flex-direction:column;gap:.9rem;overflow-y:auto;}
+.qlbl{font-size:10px;font-weight:900;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;}
+.qcard{background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:1rem;}
+.qtext{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:4px;}
+.qdisplay{background:#fff;border:2px solid var(--yellow4);border-radius:12px;padding:16px 12px;text-align:center;margin:8px 0 12px;min-height:70px;display:flex;align-items:center;justify-content:center;}
+.qf{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--blue);line-height:1.5;text-align:center;}
+.ainput{width:100%;background:#fff;border:2px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-size:15px;font-weight:700;font-family:'Space Mono',monospace;outline:none;margin-bottom:9px;transition:border-color .2s;}
+.ainput:focus{border-color:var(--blue);}
+.ainput::placeholder{color:var(--text3);font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;}
+.brow{display:flex;gap:7px;}
+.hbtn{flex:1;padding:10px 6px;background:var(--yellow3);border:2px solid rgba(204,153,0,0.25);color:var(--ydark);border-radius:10px;cursor:pointer;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;}
+.hbtn:disabled{opacity:.4;cursor:not-allowed;}
+.cbtn{flex:2;padding:10px 6px;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;border-radius:10px;cursor:pointer;font-size:12px;font-weight:900;font-family:'Nunito',sans-serif;box-shadow:0 3px 12px rgba(26,86,255,0.3);}
+.cbtn:disabled{opacity:.4;cursor:not-allowed;}
+.fb{border-radius:12px;padding:.85rem .9rem;font-size:13px;line-height:1.65;display:none;font-weight:600;margin-top:4px;}
+.fb.correct{display:block;background:#F0FDF7;border:2px solid rgba(0,196,140,0.3);color:#047857;}
+.fb.wrong{display:block;background:#FFF1F3;border:2px solid rgba(255,59,92,0.2);color:var(--red);}
+.fb.hint{display:block;background:var(--yellow3);border:2px solid rgba(204,153,0,0.25);color:var(--ydark);}
+.fb.sol{display:block;background:var(--bg);border:2px solid var(--border);color:var(--text);}
+.fb.cele{display:block;background:linear-gradient(135deg,var(--yellow3),var(--blue3));border:2px solid var(--blue4);color:var(--text);}
+.lvlup{display:none;flex-direction:column;gap:7px;}
+.lvlup.show{display:flex;}
+.lbtn{padding:9px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;border:none;text-align:center;}
+.lb-yes{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;}
+.lb-more{background:var(--yellow3);border:2px solid rgba(204,153,0,0.25);color:var(--ydark);}
+.chatwrap{border-top:2px solid var(--border);padding-top:.9rem;display:flex;flex-direction:column;gap:7px;flex:1;min-height:0;}
+.chathead{font-size:10px;font-weight:900;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:6px;}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite;}
+.chatlog{flex:1;min-height:70px;max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;}
+.cm{font-size:12px;padding:7px 10px;border-radius:10px;line-height:1.5;font-weight:600;}
+.cm.mrz{background:var(--blue3);border:1.5px solid var(--blue4);color:var(--text);}
+.cm.stu{background:var(--yellow3);color:var(--text);align-self:flex-end;max-width:88%;border:1.5px solid rgba(204,153,0,0.2);}
+.crow{display:flex;gap:5px;}
+.ci{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:9px;padding:7px 10px;color:var(--text);font-size:12px;font-family:'Nunito',sans-serif;font-weight:600;outline:none;}
+.ci:focus{border-color:var(--blue);}
+.cs{width:32px;background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;border-radius:9px;color:#fff;cursor:pointer;font-size:14px;font-weight:900;}
+.dots{display:flex;gap:4px;padding:4px 0;align-items:center;}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:bounce 1.1s infinite;}
+.dots span:nth-child(2){animation-delay:.18s;}
+.dots span:nth-child(3){animation-delay:.36s;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+@media(max-width:580px){.lbody{grid-template-columns:1fr;}.pside{border-left:none;border-top:2px solid var(--border);max-height:45vh;}.hero h1{font-size:1.5rem;}}
+</style>
+</head>
+<body>
+
+<div id="setup">
+  <div class="box">
+    <div class="icon">M</div>
+    <h1>MrZMath<span style="color:var(--yellow)">AI</span></h1>
+    <p>Paste your Anthropic API key to activate Mr.Z and start learning</p>
+    <input id="keyInput" type="password" placeholder="Paste your full API key (sk-ant-...)"/>
+    <button id="activateBtn">Activate MrZMathAI</button>
+    <div id="keyErr" class="err">Please paste your complete API key</div>
+    <div class="note">Saved only on this device. Never shared.</div>
+  </div>
+</div>
+
+<div id="home">
+  <div class="band">
+    <div class="inner">
+      <nav class="nav">
+        <div class="logo"><div class="logo-icon">M</div><div class="logo-name">MrZMath<span class="ai">AI</span></div></div>
+      </nav>
+      <div class="hero">
+        <div class="hero-tag">Free for every student</div>
+        <h1>Maths finally makes <span>sense.</span></h1>
+        <p>MrZMathAI teaches you step by step — from basics to exam level. The AI finds where you are and builds you up.</p>
+      </div>
+      <div class="suggest" id="suggestBtn">
+        <div class="sug-icon">&#x1F9E0;</div>
+        <div class="sug-text">
+          <div class="sug-label">Mr.Z recommends</div>
+          <div class="sug-msg">Expanding Brackets — start here, everything else builds on this</div>
+        </div>
+        <button class="sug-btn">Go</button>
+      </div>
+      <div class="sec-lbl">All topics</div>
+      <div class="tgrid" id="topicGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="learn">
+  <div class="lnav">
+    <button class="back" id="backBtn">Back</button>
+    <div class="ltitle" id="learnTitle">Topic</div>
+    <div class="pips">
+      <div class="pip active" id="p1"></div>
+      <div class="pip off" id="p2"></div>
+      <div class="pip off" id="p3"></div>
+      <div class="pip off" id="p4"></div>
+      <div class="pip off" id="p5"></div>
+    </div>
+    <div class="lvl-lbl" id="lvlLbl">Level 1</div>
+  </div>
+  <div class="lbody">
+    <div class="tside">
+      <div class="sblock">
+        <div class="sline"><div class="scircle">1</div><div class="sconnect"></div></div>
+        <div class="scontent">
+          <div class="stag">What you already know</div>
+          <div class="scard" id="priorCard"><div class="dots"><span></span><span></span><span></span></div></div>
+        </div>
+      </div>
+      <div class="sblock">
+        <div class="sline"><div class="scircle yc">2</div><div class="sconnect"></div></div>
+        <div class="scontent">
+          <div class="stag yt">Mr.Z teaches</div>
+          <div class="scard" id="aiCard">
+            <div class="ai-lbl" id="aiLbl">Loading...</div>
+            <div class="ai-text" id="aiText"><div class="dots"><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="sblock">
+        <div class="sline"><div class="scircle yc">!</div></div>
+        <div class="scontent">
+          <div class="stag yt">Edexcel exam tip</div>
+          <div class="tip"><div class="tip-h">Free marks - do not lose them!</div><div class="tip-t" id="tipText">Loading...</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pside">
+      <div class="qlbl">Your turn</div>
+      <div class="qcard">
+        <div class="qtext">Answer this:</div>
+        <div class="qdisplay" id="qDisplay"><div class="dots"><span></span><span></span><span></span></div></div>
+        <input class="ainput" id="ans" type="text" placeholder="Type your answer..."/>
+        <div class="brow">
+          <button class="hbtn" id="hbtn">Hint</button>
+          <button class="cbtn" id="cbtn">Check</button>
+        </div>
+      </div>
+      <div class="fb" id="fb"></div>
+      <div class="lvlup" id="lvlup">
+        <button class="lbtn lb-yes" id="lvlupYes">Level up!</button>
+        <button class="lbtn lb-more" id="lvlupMore">Another at this level</button>
+      </div>
+      <div class="chatwrap">
+        <div class="chathead"><div class="ldot"></div>Ask Mr.Z anything</div>
+        <div class="chatlog" id="clog"><div class="cm mrz">Hey! Read the steps then try the question. Ask me anything here!</div></div>
+        <div class="crow">
+          <input class="ci" id="ci" placeholder="Ask Mr.Z..."/>
+          <button class="cs" id="sendBtn">&#8593;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var KEY = '';
+var MODEL = 'claude-sonnet-4-5';
+var topic = '';
+var level = 1;
+var question = '';
+var answer = '';
+var tries = 0;
+var hist = [];
+
+var T = {
+  'expanding-brackets': {name:'Expanding Brackets',emoji:'✖️',cat:'Algebra',color:'bl',prior:'You already know the distributive property:',priorMath:'3 x (2 + 4) = 3x2 + 3x4 = 18',priorNote:'Algebra brackets work exactly the same way.',tip:'Always write your expansion line. Edexcel gives a method mark for showing 2 x x + 2 x 3 before you simplify.',sub:'Single, double and triple brackets',levels:{1:'Single bracket positive terms e.g. 3(x+5)',2:'Single bracket negatives inside e.g. 4(x-3)',3:'Negative outside bracket e.g. -3(x+2)',4:'Double brackets e.g. (x+3)(x+2)',5:'Squared and triple brackets e.g. (2x+1) squared'}},
+  'factorising': {name:'Factorising',emoji:'🔍',cat:'Algebra',color:'yl',prior:'You know that 2 x 3 = 6, so 2 and 3 are factors of 6.',priorMath:'6 = 2 x 3   factors of 6 are 1, 2, 3, 6',priorNote:'Factorising expressions works the same way - find what is common and take it out.',tip:'Always check by expanding back. Show the HCF clearly outside the bracket.',sub:'HCF, quadratics, difference of squares',levels:{1:'HCF of simple expressions e.g. 6x+3',2:'Larger coefficients e.g. 12x+8',3:'With x squared terms e.g. 3x squared + 9x',4:'Quadratics a=1 e.g. x squared + 5x + 6',5:'Quadratics a greater than 1 and difference of squares'}},
+  'solving-equations': {name:'Solving Equations',emoji:'⚖️',cat:'Algebra',color:'bl',prior:'You know BODMAS - the order of operations.',priorMath:'B O D M A S',priorNote:'To solve equations we run BODMAS in reverse to undo operations and find x.',tip:'Show every balancing step on its own line. Edexcel awards marks for each correct step.',sub:'Balance method, unknowns both sides',levels:{1:'One step equations e.g. x+5=12',2:'Two step equations e.g. 2x+3=11',3:'Unknown both sides e.g. 3x+2=x+10',4:'With brackets e.g. 3(x+2)=18',5:'Fractional equations e.g. (x+3)/2=5'}},
+  'fractions': {name:'Fractions',emoji:'🔢',cat:'Number',color:'yl',prior:'A fraction is just division - one number divided by another.',priorMath:'1/2 = 1 divided by 2 = 0.5',priorNote:'Every fraction operation follows from this basic idea.',tip:'Never add the denominators. Always find a common denominator first.',sub:'All operations, algebraic fractions',levels:{1:'Equivalent fractions and simplifying',2:'Adding and subtracting different denominators',3:'Multiplying and dividing fractions',4:'Fractions of amounts and reverse fractions',5:'Algebraic fractions'}},
+  'percentages': {name:'Percentages',emoji:'📊',cat:'Number',color:'bl',prior:'Percent means per hundred - it is just a fraction out of 100.',priorMath:'50% = 50/100 = 0.5',priorNote:'We convert any percentage to a decimal multiplier.',tip:'Use multipliers. A 15% increase means multiply by 1.15. Reverse percentage means divide.',sub:'Reverse %, compound interest, growth',levels:{1:'Finding simple percentages of amounts',2:'Percentage increase and decrease',3:'Reverse percentages',4:'Compound interest and repeated change',5:'Growth and decay problems'}},
+  'pythagoras': {name:'Pythagoras',emoji:'📐',cat:'Geometry',color:'yl',prior:'You know how to square numbers and find square roots.',priorMath:'3 squared = 9   and   square root of 9 = 3',priorNote:'Pythagoras connects the three sides of any right-angle triangle.',tip:'Label sides a, b and c first. Show substitution into a squared + b squared = c squared.',sub:'2D, 3D and exam contexts',levels:{1:'Finding the hypotenuse',2:'Finding a shorter side',3:'Decimal answers and real contexts',4:'3D Pythagoras',5:'Proof and complex problems'}},
+  'ratio': {name:'Ratio',emoji:'⚡',cat:'Number',color:'pu',prior:'You know how to simplify fractions by dividing by the HCF.',priorMath:'6:4 = 3:2   divide both by 2',priorNote:'Ratios work the same way - simplify by dividing all parts by the HCF.',tip:'For sharing problems always find the value of ONE part first then multiply up.',sub:'Simplifying, sharing, direct and inverse',levels:{1:'Writing and simplifying ratios',2:'Sharing in a given ratio',3:'Ratio problems with totals',4:'Direct and inverse proportion',5:'Proportionality with algebra'}},
+  'trigonometry': {name:'Trigonometry',emoji:'📏',cat:'Geometry',color:'bl',prior:'You already know Pythagoras. Trig also uses right-angle triangles but works with angles.',priorMath:'sin = O/H   cos = A/H   tan = O/A',priorNote:'Sin cos and tan are ratios of the sides. Label sides first then choose the right ratio.',tip:'Show side labelling, ratio choice, and substitution. Three separate marks in Edexcel.',sub:'Sin, cos, tan',levels:{1:'Labelling sides and understanding ratios',2:'Finding a missing side',3:'Finding a missing angle',4:'Multi-step problems and bearings',5:'Exact values and harder problems'}},
+  'quadratics': {name:'Quadratics',emoji:'🔺',cat:'Algebra',color:'pu',prior:'You know expanding brackets and factorising. Quadratics use both.',priorMath:'(x+3)(x+2) = x squared + 5x + 6',priorNote:'A quadratic has an x squared term. Solving means finding values of x that make it zero.',tip:'Always try factorising first. Only use the formula if it does not factorise neatly.',sub:'Factorising, formula, completing square',levels:{1:'Solving by factorising simple',2:'Solving by factorising harder',3:'The quadratic formula',4:'Completing the square',5:'Quadratic inequalities'}}
+};
+
+function getSys() {
+  var t = T[topic];
+  return 'You are Mr.Z a friendly experienced maths teacher. Warm encouraging casual but clear. Never give answers away nudge students. Max 1 emoji. Topic: ' + t.name + ' Level: ' + level + ' of 5. Content: ' + t.levels[level] + ' Edexcel exam board. Show maths on its own line. Use clear notation. Each working step on its own line. Max 4 lines explanation. Labels CONCEPT RULE EXAMPLE WARNING. No markdown.';
+}
+
+function e(t) {
+  if (!t) return '';
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function dots() {
+  return '<div class="dots"><span></span><span></span><span></span></div>';
+}
+
+document.getElementById('activateBtn').onclick = function() {
+  var k = document.getElementById('keyInput').value.trim();
+  if (k.length < 20) { document.getElementById('keyErr').style.display = 'block'; return; }
+  KEY = k;
+  try { localStorage.setItem('mrz_k', k); } catch(x) {}
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('home').style.display = 'block';
+};
+
+document.getElementById('keyInput').onkeydown = function(ev) {
+  if (ev.key === 'Enter') document.getElementById('activateBtn').click();
+};
+
+window.onload = function() {
+  try {
+    var s = localStorage.getItem('mrz_k');
+    if (s && s.length > 20) {
+      KEY = s;
+      document.getElementById('setup').style.display = 'none';
+      document.getElementById('home').style.display = 'block';
+    }
+  } catch(x) {}
+  buildGrid();
+};
+
+function buildGrid() {
+  var g = document.getElementById('topicGrid');
+  var keys = Object.keys(T);
+  g.innerHTML = keys.map(function(k) {
+    var t = T[k];
+    return '<div class="tc" data-id="' + k + '"><div class="tc-top ' + t.color + '"></div><div class="tc-emoji">' + t.emoji + '</div><div class="tc-name">' + t.name + '</div><div class="tc-sub">' + t.sub + '</div><div class="tc-foot"><span class="tc-badge">' + t.cat + '</span><span class="tc-arr">&#8594;</span></div></div>';
+  }).join('');
+  g.onclick = function(ev) {
+    var tc = ev.target.closest('.tc');
+    if (tc) go(tc.dataset.id);
+  };
+}
+
+document.getElementById('suggestBtn').onclick = function() { go('expanding-brackets'); };
+document.getElementById('backBtn').onclick = function() {
+  document.getElementById('learn').style.display = 'none';
+  document.getElementById('home').style.display = 'block';
+};
+
+function go(id) {
+  topic = id; level = 1; tries = 0; hist = [];
+  document.getElementById('learnTitle').textContent = T[id].name;
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('learn').style.display = 'flex';
+  reset();
+  pips();
+  prior();
+  teach();
+}
+
+function pips() {
+  for (var i = 1; i <= 5; i++) {
+    var p = document.getElementById('p' + i);
+    p.className = 'pip ' + (i < level ? 'done' : i === level ? 'active' : 'off');
+  }
+  document.getElementById('lvlLbl').textContent = 'Level ' + level;
+}
+
+function prior() {
+  var t = T[topic];
+  document.getElementById('priorCard').innerHTML = '<p>' + e(t.prior) + '</p><div class="mline">' + e(t.priorMath) + '</div><p>' + e(t.priorNote) + '</p>';
+  document.getElementById('tipText').textContent = t.tip;
+}
+
+function reset() {
+  document.getElementById('ans').value = '';
+  var fb = document.getElementById('fb');
+  fb.className = 'fb'; fb.innerHTML = ''; fb.style.display = 'none';
+  document.getElementById('cbtn').disabled = false;
+  document.getElementById('hbtn').disabled = false;
+  document.getElementById('lvlup').classList.remove('show');
+  tries = 0; question = ''; answer = '';
+}
+
+async function teach() {
+  var t = T[topic];
+  document.getElementById('aiLbl').textContent = 'Mr.Z - Level ' + level;
+  document.getElementById('aiText').innerHTML = dots();
+  document.getElementById('qDisplay').innerHTML = dots();
+
+  var p = 'Teach Level ' + level + ' of ' + t.name + '. Structure: CONCEPT: one sentence connecting to prior knowledge. RULE: the one rule. EXAMPLE: worked example each step on its own line. WARNING: most common mistake. Then: QUESTION: one question for this level. ANSWER: exact answer.';
+
+  try {
+    var r = await api(p);
+    var parts = r.split('QUESTION:');
+    var teaching = parts[0].trim();
+    if (parts[1]) {
+      var ap = parts[1].split('ANSWER:');
+      question = ap[0].trim();
+      answer = ap[1] ? ap[1].trim() : '';
+    }
+    document.getElementById('aiText').innerHTML = fmt(teaching);
+    document.getElementById('qDisplay').innerHTML = question ? '<div class="qf">' + e(question) + '</div>' : '<div class="qf" style="font-size:13px;color:var(--text2)">Could not load</div>';
+  } catch(err) {
+    document.getElementById('aiText').innerHTML = '<p style="color:var(--red)">Error: ' + e(err.message) + '</p>';
+    document.getElementById('qDisplay').innerHTML = '<div class="qf" style="font-size:13px;color:var(--text2)">Error</div>';
+  }
+}
+
+function fmt(t) {
+  var lines = t.split('
+').filter(function(l) { return l.trim(); });
+  var h = '';
+  lines.forEach(function(line) {
+    line = line.trim();
+    if (line.indexOf('CONCEPT:') === 0) { h += '<p class="sh">Concept</p><p>' + e(line.replace('CONCEPT:','').trim()) + '</p>'; }
+    else if (line.indexOf('RULE:') === 0) { h += '<p class="sh">The Rule</p><p><strong>' + e(line.replace('RULE:','').trim()) + '</strong></p>'; }
+    else if (line.indexOf('EXAMPLE:') === 0) { h += '<p class="sh">Worked Example</p>'; }
+    else if (line.indexOf('WARNING:') === 0) { h += '<p class="sh">Watch Out</p><p class="warn">' + e(line.replace('WARNING:','').trim()) + '</p>'; }
+    else if (/[=x+\-]/.test(line) && line.length < 60) { h += '<div class="mline bl2">' + e(line) + '</div>'; }
+    else { h += '<p>' + e(line) + '</p>'; }
+  });
+  return h;
+}
+
+document.getElementById('cbtn').onclick = async function() {
+  var v = document.getElementById('ans').value.trim();
+  if (!v) return;
+  tries++;
+  document.getElementById('cbtn').disabled = true;
+  var fb = document.getElementById('fb');
+  fb.className = 'fb sol'; fb.style.display = 'block';
+  fb.innerHTML = dots();
+  var next = Math.min(level + 1, 5);
+  var p = 'Student doing ' + topic + ' Level ' + level + '. Question: ' + question + ' Expected: ' + answer + ' Student: ' + v + ' Attempt: ' + tries + '. If CORRECT write CORRECT line 1. Celebrate briefly. Ask if ready for Level ' + next + ' or want another at this level. If WRONG attempt 1 write WRONG line 1. Ask one question to help find mistake. If WRONG attempt 2+ write WRONG line 1. Show full step by step solution.';
+  try {
+    var r = await api(p);
+    var ok = r.trim().indexOf('CORRECT') === 0;
+    var msg = r.replace(/^(CORRECT|WRONG)
+?/,'').trim();
+    if (ok) {
+      fb.className = 'fb cele'; fb.innerHTML = '&#127775; ' + e(msg);
+      document.getElementById('hbtn').disabled = true;
+      if (level < 5) document.getElementById('lvlup').classList.add('show');
+      else fb.innerHTML += '<br><br>&#127942; All 5 levels done! Fully exam ready!';
+    } else if (tries >= 2) {
+      fb.className = 'fb sol'; fb.innerHTML = e(msg);
+    } else {
+      fb.className = 'fb wrong'; fb.innerHTML = e(msg);
+      document.getElementById('cbtn').disabled = false;
+    }
+  } catch(err) {
+    fb.className = 'fb wrong'; fb.innerHTML = 'Connection error. Try again.';
+    document.getElementById('cbtn').disabled = false;
+  }
+};
+
+document.getElementById('hbtn').onclick = async function() {
+  var fb = document.getElementById('fb');
+  fb.className = 'fb hint'; fb.style.display = 'block'; fb.innerHTML = dots();
+  try {
+    var r = await api('Give a short hint for this without giving the answer. Topic: ' + topic + ' Level: ' + level + ' Question: ' + question + ' Max 2 sentences.');
+    fb.innerHTML = 'Mr.Z hint: ' + e(r);
+  } catch(err) {
+    fb.innerHTML = 'Hint: Think about what the number outside does to each term inside.';
+  }
+};
+
+document.getElementById('lvlupYes').onclick = async function() {
+  if (level >= 5) return;
+  level++;
+  document.getElementById('lvlup').classList.remove('show');
+  pips(); reset();
+  addm('mrz', 'Level ' + level + ' - lets go!');
+  await teach();
+};
+
+document.getElementById('lvlupMore').onclick = async function() {
+  document.getElementById('lvlup').classList.remove('show');
+  reset();
+  addm('mrz', 'Good call - here is another one!');
+  await teach();
+};
+
+document.getElementById('sendBtn').onclick = chat;
+document.getElementById('ci').onkeydown = function(ev) { if (ev.key === 'Enter') chat(); };
+
+async function chat() {
+  var ci = document.getElementById('ci');
+  var msg = ci.value.trim(); if (!msg) return; ci.value = '';
+  addm('stu', msg);
+  var ld = document.createElement('div'); ld.className = 'cm mrz'; ld.innerHTML = dots();
+  var log = document.getElementById('clog');
+  log.appendChild(ld); log.scrollTop = 9999;
+  hist.push({role:'user', content:msg});
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','x-api-key':KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({model:MODEL, max_tokens:400, system:getSys() + ' Current question: ' + question, messages:hist})
+    });
+    var d = await resp.json();
+    var rep = d.content && d.content[0] ? d.content[0].text : 'Try again!';
+    hist.push({role:'assistant', content:rep});
+    ld.innerHTML = e(rep);
+  } catch(err) { ld.innerHTML = 'Connection error. Try again.'; }
+  log.scrollTop = 9999;
+}
+
+function addm(type, text) {
+  var log = document.getElementById('clog');
+  var m = document.createElement('div'); m.className = 'cm ' + type; m.textContent = text;
+  log.appendChild(m); log.scrollTop = 9999;
+}
+
+async function api(prompt) {
+  var resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','x-api-key':KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body: JSON.stringify({model:MODEL, max_tokens:800, system:getSys(), messages:[{role:'user',content:prompt}]})
+  });
+  if (!resp.ok) {
+    var err = await resp.json().catch(function(){return {};});
+    throw new Error('API ' + resp.status + ': ' + (err.error && err.error.message ? err.error.message : 'error'));
+  }
+  var d = await resp.json();
+  return d.content && d.content[0] ? d.content[0].text : '';
+}
+</script>
+</body>
+</html>
